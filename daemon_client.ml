@@ -14,7 +14,7 @@
 
 (* Establish connection to the server via a file descriptor. *)
 let make_rpc path  =
-  let open Xmlrpc_client in
+	let open Xmlrpc_client in
 	let module Rpc = struct
 		let transport = ref (Unix path)
 		let rpc call =
@@ -22,12 +22,12 @@ let make_rpc path  =
 	end in
 	(module Rpc : Daemon_interface.RPC)
 module Rpc =
-  (val (make_rpc (Filename.concat Fhs.vardir Daemon_interface.name)) : Daemon_interface.RPC)
+	(val (make_rpc (Filename.concat Fhs.vardir Daemon_interface.name)) : Daemon_interface.RPC)
 module Client = Daemon_interface.Client(Rpc)
 
 (* Make an API call. *)
 let _ =
-  let open Printf in
+	let open Printf in
 	printf "CLIENT: Begin.\n";
 	printf "CLIENT: Calling SERVER's hello with \"Foo\"...\n";
 	let reply = Client.hello "Foo" in

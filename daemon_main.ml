@@ -34,25 +34,25 @@ let fd_path = Filename.concat Fhs.vardir Daemon_interface.name
 
 (* Bind server to the file descriptor. *)
 let start fd_path process =
-  let server = Http_svr.Server.empty () in
+	let server = Http_svr.Server.empty () in
 	Http_svr.Server.add_handler server Http.Post "/" (Http_svr.BufIO (xmlrpc_handler process));
 	Unixext.mkdir_safe (Filename.dirname fd_path) 0o700;
 	Unixext.unlink_safe fd_path;
 	let domain_sock = Http_svr.bind (Unix.ADDR_UNIX(fd_path)) "unix_rpc" in
 	Http_svr.start server domain_sock;
-  (* Only needed when binding the HTTP server to localhost. *)
-  (*
+	(* Only needed when binding the HTTP server to localhost. *)
+	(*
 	let localhost = Unix.inet_addr_of_string "127.0.0.1" in
 	let localhost_sock = Http_svr.bind (Unix.ADDR_INET(localhost, 4094)) "inet-RPC" in
 	Http_svr.start server localhost_sock;
-  *)
+	*)
 	()
 
 (* Entry point. *)
 let _ =
-  print_endline "daemon_main: START";
+	print_endline "daemon_main: START";
 
-  print_endline "daemon_main: processing arguments ..";
+	print_endline "daemon_main: processing arguments ..";
 	let pidfile = ref "" in
 	let daemonize = ref false in
 	Arg.parse (Arg.align [
@@ -61,26 +61,26 @@ let _ =
 		])
 		(fun _ -> failwith "Invalid argument")
 		(Printf.sprintf "Usage: %s [-daemon] [-pidfile filename]" Daemon_interface.name);
-  print_endline "daemon_main: arguments processed.";
+	print_endline "daemon_main: arguments processed.";
 
 	if !daemonize then begin
-    print_endline "daemon_main: daemonizing ..";
-    Unixext.daemonize ()
-  end else begin
-    print_endline "daemon_main: not daemonizing ..";
-  end;
+		print_endline "daemon_main: daemonizing ..";
+		Unixext.daemonize ()
+	end else begin
+		print_endline "daemon_main: not daemonizing ..";
+	end;
 
 	if !pidfile <> "" then begin
-    print_endline "daemon_main: storing process id into specified file ..";
+		print_endline "daemon_main: storing process id into specified file ..";
 		Unixext.mkdir_rec (Filename.dirname !pidfile) 0o755;
 		Unixext.pidfile_write !pidfile;
 	end;
 
-  print_endline "daemon_main: starting server ..";
+	print_endline "daemon_main: starting server ..";
 	start fd_path Server.process;
 
-  while true do
-    Thread.delay 300.
-  done;
+	while true do
+		Thread.delay 300.
+	done;
 
-  print_endline "daemon_main: END"
+	print_endline "daemon_main: END"
