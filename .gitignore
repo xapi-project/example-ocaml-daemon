@@ -1,0 +1,10 @@
+*.annot
+*.cmi
+*.cmx
+*.o
+*.omc
+*.spot
+daemon_client
+daemon_client.opt
+daemon_server
+daemon_server.opt

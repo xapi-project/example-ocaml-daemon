@@ -1,0 +1,26 @@
+OCAMLINCLUDES = ..
+OCAMLPACKS    = xml-light2 stunnel http-svr
+
+UseCamlp4(rpc-light.idl, daemon_interface)
+UseCamlp4(rpc-light.syntax, daemon_server)
+
+DAEMON_SERVER = daemon_server
+DAEMON_SERVER_FILES = daemon_main daemon_interface daemon_server
+DAEMON_CLIENT = daemon_client
+DAEMON_CLIENT_FILES = daemon_client daemon_interface
+
+OCamlProgram($(DAEMON_SERVER), $(DAEMON_SERVER_FILES))
+OCamlDocProgram($(DAEMON_SERVER), $(DAEMON_SERVER_FILES))
+OCamlProgram($(DAEMON_CLIENT), $(DAEMON_CLIENT_FILES))
+
+.PHONY: test
+test: $(DAEMON_SERVER) $(DAEMON_CLIENT)
+	killall $(DAEMON_SERVER) || true
+	./$(DAEMON_SERVER) -daemon
+	./$(DAEMON_CLIENT)
+	killall $(DAEMON_SERVER) || true
+
+.PHONY: clean
+clean:
+	rm -f *.cmi *.cmx *.cmo *.a *.cma *.run *.opt *.annot *.o *.orig *.spit *.spot *.omc
+	rm -f $(DAEMON_SERVER) $(DAEMON_CLIENT)
